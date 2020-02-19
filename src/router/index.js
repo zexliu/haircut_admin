@@ -301,6 +301,50 @@ export const asyncRoutes = [
         }
       }
     ]
+  }, {
+    path: '/shop',
+    component: Layout,
+    redirect: '/shop/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'Shop',
+    meta: {
+      title: '店铺管理',
+      icon: 'shop',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'index',
+        component: () => import('@/views/shop/index'),
+        name: 'ShopList',
+        meta: {
+          icon: 'list',
+          title: '店铺列表',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'add',
+        component: () => import('@/views/shop/add'),
+        name: 'AddShpo',
+        hidden: true,
+        meta: {
+          icon: 'list',
+          title: '新增店铺',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'update',
+        component: () => import('@/views/shop/update'),
+        name: 'UpdateShop',
+        hidden: true,
+        meta: {
+          icon: 'list',
+          title: '修改店铺',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
   },
   {
     path: '/permission',

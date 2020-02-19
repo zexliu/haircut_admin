@@ -1,5 +1,6 @@
 <template>
   <el-card class="form-container" shadow="never">
+
     <el-form ref="form" :model="form" :rules="rules" label-width="150px">
       <el-form-item label="用户名(账号)：" prop="username">
         <el-input v-model="form.username" />
@@ -11,7 +12,7 @@
         <el-input v-model="form.nickname" />
       </el-form-item>
       <el-form-item label="头像：" prop="avatar">
-        <el-input v-model="form.avatar" />
+        <avatar-upload v-model="form.avatar" />
       </el-form-item>
       <el-form-item label="邮箱：" prop="email">
         <el-input v-model="form.email" />
@@ -70,6 +71,7 @@ import { tree } from '@/api/role'
 import { fetchList as fetchGroups } from '@/api/user-group'
 import { fetchDetail, create, update } from '@/api/user'
 import { hex_md5 } from '@/utils/md5'
+import AvatarUpload from '@/components/Upload/AvatarUpload'
 
 const defaultForm = {
   username: null,
@@ -87,6 +89,7 @@ const defaultForm = {
 }
 export default {
   name: 'UserDetail',
+  components: { AvatarUpload },
   props: {
     isEdit: {
       type: Boolean,
@@ -247,6 +250,6 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
 </style>
