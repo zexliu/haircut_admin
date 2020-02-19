@@ -1,15 +1,15 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'Admin-Token'
+const TokenKey = 'ACCESS-TOKEN'
 
-export function getToken() {
+export function getAccessToken() {
   return Cookies.get(TokenKey)
 }
 
-export function setToken(token) {
+export function setAccessToken(token) {
   return Cookies.set(TokenKey, token)
 }
 
-export function removeToken() {
+export function removeAccessToken() {
   return Cookies.remove(TokenKey)
 }

@@ -128,11 +128,28 @@ aside {
   margin: 30px 50px;
   position: relative;
 }
-
+.in-line {
+  display: inline-block;
+}
 .pagination-container {
   margin-top: 30px;
 }
-
+//添加、更新表单样式
+.form-container {
+  // position: absolute;
+  left: 0;
+  right: 0;
+  width: 720px;
+  padding: 35px 35px 15px 35px;
+  margin: 20px auto;
+}
+.large-form-container {
+  left: 0;
+  right: 0;
+  width: 1024px;
+  padding: 35px 35px 15px 35px;
+  margin: 20px auto;
+}
 .text-center {
   text-align: center
 }
@@ -172,13 +189,20 @@ aside {
 }
 
 .filter-container {
-  padding-bottom: 10px;
 
-  .filter-item {
-    display: inline-block;
-    vertical-align: middle;
-    margin-bottom: 10px;
-  }
+  
+}
+//操作栏样式
+.operate-container {
+  margin-top: 20px;
+}
+
+.operate-container .btn-add {
+  float: right;
+}
+//表格栏样式
+.table-container {
+  margin-top: 20px;
 }
 
 //refine vue-multiselect plugin

@@ -79,7 +79,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
   },
@@ -129,6 +129,179 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  {
+    path: '/rbac',
+    component: Layout,
+    redirect: '/rbac/users/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'RBAC',
+    meta: {
+      title: '权限系统',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'users/index',
+        component: () => import('@/views/rbac/user/index'),
+        name: 'Users',
+        meta: {
+          title: '用户管理',
+          icon: 'user',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'users/add',
+        component: () => import('@/views/rbac/user/add'),
+        name: 'AddUsers',
+        hidden: true,
+        meta: {
+          title: '添加用户',
+          icon: 'people',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'users/update/:id(\\d+)',
+        component: () => import('@/views/rbac/user/update'),
+        name: 'UpdateUser',
+        hidden: true,
+        meta: {
+          title: '修改用户',
+          icon: 'people',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'groups/index',
+        component: () => import('@/views/rbac/user-group/index'),
+        name: 'UserGroups',
+        meta: {
+          title: '用户组管理',
+          icon: 'peoples',
+          roles: ['admin'] // or
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'groups/add',
+        component: () => import('@/views/rbac/user-group/add'),
+        name: 'AddGroups',
+        hidden: true,
+        meta: {
+          title: '添加用户组',
+          icon: 'people',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'groups/update/:id(\\d+)',
+        component: () => import('@/views/rbac/user-group/update'),
+        name: 'UpdateGroups',
+        hidden: true,
+        meta: {
+          title: '修改用户组',
+          icon: 'people',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'roles/index',
+        component: () => import('@/views/rbac/role/index'),
+        name: 'Roles',
+        meta: {
+          title: '角色管理',
+          icon: 'people',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'roles/add',
+        component: () => import('@/views/rbac/role/add'),
+        name: 'AddRole',
+        hidden: true,
+        meta: {
+          title: '添加角色',
+          icon: 'people',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'roles/update/:id(\\d+)',
+        component: () => import('@/views/rbac/role/update'),
+        name: 'UpdateRole',
+        hidden: true,
+        meta: {
+          title: '修改角色',
+          icon: 'people',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'permissions/index',
+        component: () => import('@/views/rbac/permission/index'),
+        name: 'Permission',
+        meta: {
+          title: '权限管理',
+          icon: 'permission',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'permissions/add',
+        component: () => import('@/views/rbac/permission/add'),
+        name: 'AddPermission',
+        hidden: true,
+        meta: {
+          title: '新增权限',
+          icon: 'permission',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'permissions/update/:id(\\d+)',
+        component: () => import('@/views/rbac/permission/update'),
+        name: 'UpdatePermission',
+        hidden: true,
+        meta: {
+          title: '修改权限',
+          icon: 'permission',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'modules/index',
+        component: () => import('@/views/rbac/permission-module/index'),
+        name: 'Module',
+        meta: {
+          icon: 'module',
+          title: '权限模块管理',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'modules/add',
+        component: () => import('@/views/rbac/permission-module/add'),
+        name: 'AddModule',
+        hidden: true,
+        meta: {
+          title: '新增权限模块',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'modules/update/:id(\\d+)',
+        component: () => import('@/views/rbac/permission-module/update'),
+        name: 'UpdateModule',
+        hidden: true,
+        meta: {
+          title: '编辑模权限模块',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
   {
     path: '/permission',
     component: Layout,
