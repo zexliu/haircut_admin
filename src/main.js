@@ -18,6 +18,7 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
+import VueAMap from 'vue-amap'
 
 /**
  * If you don't want to use mock-server
@@ -42,6 +43,15 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
+
+Vue.use(VueAMap)
+
+VueAMap.initAMapApiLoader({
+  key: '4b88cfec3af28627ca6a4d80f8ec9543',
+  plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor', 'AMap.Geocoder'],
+  // 默认高德 sdk 版本为 1.4.4
+  v: '1.4.4'
+})
 
 new Vue({
   el: '#app',

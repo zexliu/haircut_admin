@@ -301,7 +301,31 @@ export const asyncRoutes = [
         }
       }
     ]
-  }, {
+  },
+  {
+    path: '/audit',
+    component: Layout,
+    redirect: '/audit/shop',
+    alwaysShow: true, // will always show the root menu
+    name: 'Audit',
+    meta: {
+      title: '审核系统',
+      icon: 'audit',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'shop',
+        component: () => import('@/views/audit/shop'),
+        name: 'ShopList',
+        meta: {
+          icon: 'shop',
+          title: '店铺入驻',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
     path: '/shop',
     component: Layout,
     redirect: '/shop/index',
@@ -334,7 +358,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'update',
+        path: 'update/:id(\\d+)',
         component: () => import('@/views/shop/update'),
         name: 'UpdateShop',
         hidden: true,
@@ -346,6 +370,145 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/setting',
+    component: Layout,
+    redirect: '/setting/service/project/index',
+    alwaysShow: false, // will always show the root menu
+    name: 'Setting',
+    meta: {
+      title: '基础配置',
+      icon: 'setting',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'service/project/index',
+        component: () => import('@/views/setting/service-project-index'),
+        name: 'ServiceProject',
+        meta: {
+          icon: 'project',
+          title: '服务项目',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+
+      {
+        path: 'service/project/add',
+        component: () => import('@/views/setting/service-project-add'),
+        name: 'AddServiceProject',
+        hidden: true,
+        meta: {
+          title: '新增服务项目',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'service/project/update/:id(\\d+)',
+        component: () => import('@/views/setting/service-project-update'),
+        name: 'UpdateServiceProject',
+        hidden: true,
+        meta: {
+          title: '修改服务项目',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'shop/title/index',
+        component: () => import('@/views/setting/shop-title-index'),
+        name: 'ShopTitle',
+        meta: {
+          icon: 'component',
+          title: '服务标准',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+
+      {
+        path: 'shop/title/add',
+        component: () => import('@/views/setting/shop-title-add'),
+        name: 'AddShopTitle',
+        hidden: true,
+        meta: {
+          title: '新增服务标准',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'shop/title/update/:id(\\d+)',
+        component: () => import('@/views/setting/shop-title-update'),
+        name: 'UpdateShopTitle',
+        hidden: true,
+        meta: {
+          title: '修改服务标准',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'job/title/index',
+        component: () => import('@/views/setting/job-title-index'),
+        name: 'JobTitle',
+        meta: {
+          icon: 'stylist-title',
+          title: '发型师职称',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+
+      {
+        path: 'job/title/add',
+        component: () => import('@/views/setting/job-title-add'),
+        name: 'AddJobTitle',
+        hidden: true,
+        meta: {
+          title: '新增发型师职称',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'job/title/update/:id(\\d+)',
+        component: () => import('@/views/setting/job-title-update'),
+        name: 'UpdateJobTitle',
+        hidden: true,
+        meta: {
+          title: '修改发型师职称',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'stylist/domain/index',
+        component: () => import('@/views/setting/stylist-domain-index'),
+        name: 'StylistDomain',
+        meta: {
+          icon: 'cut',
+          title: '擅长领域',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+
+      {
+        path: 'stylist/domain/add',
+        component: () => import('@/views/setting/stylist-domain-add'),
+        name: 'AddStylistDomain',
+        hidden: true,
+        meta: {
+          title: '新增擅长领域',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'stylist/domain/update/:id(\\d+)',
+        component: () => import('@/views/setting/stylist-domain-update'),
+        name: 'UpdateStylistDomain',
+        hidden: true,
+        meta: {
+          title: '修改擅长领域',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+
+    ]
+  },
+
   {
     path: '/permission',
     component: Layout,

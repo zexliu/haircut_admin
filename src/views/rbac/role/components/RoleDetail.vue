@@ -103,8 +103,6 @@ export default {
         this.permissionTree = response
         // 递归便利取出权限列表 并设置 disable状态
         this.recursive(this.permissionTree)
-        console.log(this.permissionTree)
-        console.log(this.permissions)
       })
     },
     recursive(list) {
@@ -147,13 +145,11 @@ export default {
             // 组装数据 keys数组中排除权限模块的数据 值提交权限
             this.form.permissionIds = []
             const list = this.$refs.tree.getCheckedKeys()
-            console.log('list', list)
             for (let i = 0; i < list.length; i++) {
               const element = list[i]
               const item = this.permissions.find(item => {
                 return item.id === element
               })
-              console.log('便利', item)
               if (item) {
                 this.form.permissionIds.push(item.id)
               }

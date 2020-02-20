@@ -16,3 +16,10 @@ export function fetchTree(params) {
   })
 }
 
+export function fetchByCode(code) {
+  return request({
+    url: '/api/v1/regions/code/' + code,
+    method: 'get'
+  })
+}
+

@@ -57,7 +57,7 @@
       </el-form-item>
 
       <el-form-item label="详情信息：" prop="htmlInfo">
-        <tinymce v-model="form.htmlInfo" :height="100" />
+        <tinymce ref="tinymce" v-model="form.htmlInfo" :height="100" />
       </el-form-item>
       <el-row>
 
@@ -304,6 +304,10 @@ export default {
       this.provinceOptions = results[0]
       if (this.isEdit) {
         this.form = results[1]
+        this.remoteMethod(this.form.userId)
+        this.resetAddressOptions()
+        this.mapCenter = [this.form.longitude, this.form.latitude]
+        this.currentMaker = [this.form.longitude, this.form.latitude]
       }
     })
   },
@@ -340,21 +344,19 @@ export default {
     },
     getProvinceAndCityByCode() {
       fetchByCode(this.form.districtCode).then(response => {
-        console.log('result')
         this.form.provinceCode = response.provinceCode
-        const province = this.provinceOptions.find(item => {
-          return item.adCode === this.form.provinceCode
-        })
-        console.log('province', province)
-        this.cityOptions = province.children
         this.form.cityCode = response.cityCode
-
-        const city = this.cityOptions.find(item => {
-          return item.adCode === this.form.cityCode
-        })
-        console.log('city', city)
-        this.districtOptions = city.children
       })
+    },
+    resetAddressOptions() {
+      const province = this.provinceOptions.find(item => {
+        return item.adCode === this.form.provinceCode
+      })
+      this.cityOptions = province.children
+      const city = this.cityOptions.find(item => {
+        return item.adCode === this.form.cityCode
+      })
+      this.districtOptions = city.children
     },
     onSearchResult(pois) {
       let latSum = 0
@@ -410,6 +412,7 @@ export default {
             } else {
               create(this.form).then(() => {
                 this.$refs[formName].resetFields()
+                this.$refs.tinymce.setContent('')
                 this.form = Object.assign({}, defaultForm)
                 this.$notify({
                   message: '提交成功',

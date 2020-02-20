@@ -6,15 +6,12 @@
           <i class="el-icon-search" />
         </el-form-item>
         <el-form-item label="输入搜索：">
-          <el-input v-model="listQuery.keywords" placeholder="名称、手机号" />
+          <el-input v-model="listQuery.keywords" placeholder="店铺名称" />
         </el-form-item>
-        <el-form-item label="所在地区：">
-          <el-cascader v-model="selectedRegion" :options="regionTree" :props="{checkStrictly: true ,value:'adCode' , label:'name'}" />
-        </el-form-item>
-        <el-form-item label="工作状态：">
-          <el-select v-model="listQuery.workStatus" placeholder="请选择">
+        <el-form-item label="审核状态：">
+          <el-select v-model="listQuery.auditStatus" placeholder="请选择">
             <el-option
-              v-for="item in workStatus"
+              v-for="item in auditStatus"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -35,7 +32,6 @@
       <el-card class="operate-container" shadow="never">
         <i class="el-icon-tickets" />
         <span>数据列表</span>
-        <el-button type="primary" class="btn-add" @click="handleAdd()">新增</el-button>
       </el-card>
       <el-table
         :data="tableData"
@@ -53,15 +49,30 @@
           width="120"
         />
         <el-table-column
-          prop="logo"
-          label="LOGO"
+          prop="photo"
+          label="门店照片"
           width="80"
         >
           <template slot-scope="scope">
             <el-image
               style="width: 60px; height: 60px"
-              :src="scope.row.logo"
+              :src="scope.row.photo"
               fit="cover"
+              :preview-src-list="[scope.row.photo,scope.row.businessLicense]"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="businessLicense"
+          label="营业执照"
+          width="80"
+        >
+          <template slot-scope="scope">
+            <el-image
+              style="width: 60px; height: 60px"
+              :src="scope.row.businessLicense"
+              fit="cover"
+              :preview-src-list="[scope.row.businessLicense,scope.row.photo]"
             />
           </template>
         </el-table-column>
@@ -76,28 +87,15 @@
           width="120"
         />
         <el-table-column
-          label="可用状态"
+          label="审核状态"
           width="100"
         >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.enable">可用</el-tag>
-            <el-tag v-else type="danger">禁用</el-tag>
+            <el-tag v-if="scope.row.auditStatus === 'PENDING'">待审核</el-tag>
+            <el-tag v-else-if="scope.row.auditStatus === 'PASSED'" type="success">已通过</el-tag>
+            <el-tag v-else type="warning">已驳回</el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          label="工作状态"
-          width="100"
-        >
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.workStatus === 'WORK'">营业</el-tag>
-            <el-tag v-else type="info">停业</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="score"
-          label="评分"
-          width="80"
-        />
         <el-table-column
           width="100"
           label="省"
@@ -145,9 +143,16 @@
         </el-table-column>
         <el-table-column label="操作" width="200" fixed="right" align="center">
           <template slot-scope="scope">
-            <router-link :to="'/shop/update/'+scope.row.id">
-              <el-button>编辑</el-button>
-            </router-link>
+            <el-button
+              :disabled="scope.row.auditStatus !== 'PENDING'"
+              type="success"
+              @click="handlePass(scope.$index, scope.row)"
+            >通过</el-button>
+            <el-button
+              :disabled="scope.row.auditStatus !== 'PENDING'"
+              type="warning"
+              @click="handleReject(scope.$index, scope.row)"
+            >驳回</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -168,18 +173,15 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/shop'
-import { fetchTree as fetchRegionTree, fetchList as fetchRegionList } from '@/api/region'
+import { fetchApplys as fetchList } from '@/api/shop'
+import { fetchList as fetchRegionList } from '@/api/region'
+import { audit } from '@/api/audit'
 
 const defaultListQuery = {
   keywords: null,
-  workStatus: null,
-  provinceCode: null,
-  cityCode: null,
-  districtCode: null,
+  auditStatus: 'PENDING',
   current: 1,
   size: 10
-
 }
 export default {
   data() {
@@ -191,17 +193,25 @@ export default {
       modules: [],
       regionTree: [],
       regions: [],
-      selectedRegion: [],
-      workStatus: [
+      currentImage: null,
+      imageDialogShow: false,
+      auditStatus: [
         {
-          value: 'WORK',
-          label: '营业'
+          value: null,
+          label: '全部'
+        },
+        {
+          value: 'PENDING',
+          label: '待审核'
         }, {
-          value: 'REST',
-          label: '停业'
+          value: 'PASSED',
+          label: '已通过'
+        },
+        {
+          value: 'REJECTED',
+          label: '已驳回'
         }
       ]
-
     }
   },
   created() {
@@ -209,10 +219,46 @@ export default {
     this.getList()
   },
   methods: {
-    fetchRegion() {
-      fetchRegionTree({ level: 2 }).then(response => {
-        this.regionTree = response
+    handlePass(index, row) {
+      this.$confirm('确定通过该条记录的审核吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        audit({ targetType: 'SHOP', targetId: row.id, auditStatus: 'PASSED' }).then(response => {
+          this.$notify({
+            type: 'success',
+            message: '审核成功'
+          })
+          this.getList()
+        })
+      }).catch(() => {
+        this.$notify({
+          type: 'info',
+          message: '取消审核通过'
+        })
       })
+    },
+    handleReject(index, row) {
+      this.$prompt('请输入审核意见', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        audit({ targetType: 'SHOP', targetId: row.id, auditStatus: 'REJECTED', message: value }).then(response => {
+          this.$notify({
+            type: 'success',
+            message: '审核成功'
+          })
+          this.getList()
+        })
+      }).catch(() => {
+        this.$notify({
+          type: 'info',
+          message: '取消审核驳回'
+        })
+      })
+    },
+    fetchRegion() {
       fetchRegionList().then(response => {
         this.regions = response
       })
@@ -230,27 +276,11 @@ export default {
       this.tableData = data.records
     },
     handleSearch() {
-      if (this.selectedRegion) {
-        if (this.selectedRegion[0]) {
-          this.listQuery.provinceCode = this.selectedRegion[0]
-        } else {
-          this.listQuery.provinceCode = null
-        }
-        if (this.selectedRegion[1]) {
-          this.listQuery.cityCode = this.selectedRegion[1]
-        } else {
-          this.listQuery.cityCode = null
-        }
-      }
       this.listQuery.current = 1
       this.getList()
     },
     handleResetSearch() {
-      this.selectedRegion = []
       this.listQuery = Object.assign({}, defaultListQuery)
-    },
-    handleAdd() {
-      this.$router.push({ path: '/shop/add' })
     },
     handleSizeChange(val) {
       this.listQuery.size = val
