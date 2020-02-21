@@ -371,6 +371,40 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/discount',
+    component: Layout,
+    redirect: '/discount/coupon/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'Discount',
+    meta: {
+      title: '优惠管理',
+      icon: 'discount',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'coupon/index',
+        component: () => import('@/views/coupon/index'),
+        name: 'CouponList',
+        meta: {
+          icon: 'coupon',
+          title: '优惠券管理',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+
+      {
+        path: 'coupon/add',
+        component: () => import('@/views/coupon/add'),
+        name: 'AddCoupon',
+        hidden: true,
+        meta: {
+          title: '新增优惠券',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
     path: '/setting',
     component: Layout,
     redirect: '/setting/service/project/index',
