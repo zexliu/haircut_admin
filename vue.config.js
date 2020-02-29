@@ -32,6 +32,7 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
+    disableHostCheck: true, // 开发环境关闭Host检查
     overlay: {
       warnings: false,
       errors: true
