@@ -270,11 +270,17 @@ export default {
       if (val && val.length === 2) {
         this.form.pullStartAt = val[0]
         this.form.pullEndAt = val[1]
+      } else {
+        this.form.pullStartAt = null
+        this.form.pullEndAt = null
       }
     }, useTimeChanged(val) {
       if (val && val.length === 2) {
         this.form.absoluteStartAt = val[0]
         this.form.absoluteEndAt = val[1]
+      } else {
+        this.form.absoluteStartAt = null
+        this.form.absoluteEndAt = null
       }
     }
   }
