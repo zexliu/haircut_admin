@@ -604,11 +604,44 @@ export const asyncRoutes = [
           title: '修改擅长领域',
           roles: ['ADMIN'] // or you can only set roles in sub nav
         }
+      },
+      {
+        path: 'commission/index',
+        component: () => import('@/views/setting/commission-index'),
+        name: 'Commission',
+        meta: {
+          icon: 'nested',
+          title: '抽成设置',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
       }
 
     ]
   },
 
+  {
+    path: '/feedback',
+    component: Layout,
+    redirect: '/feedback/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'Feedback',
+    meta: {
+      title: '意见反馈',
+      icon: 'feedback',
+      roles: ['ADMIN'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'index',
+        component: () => import('@/views/feedback/index'),
+        name: 'Feedback',
+        meta: {
+          icon: 'feedback-list',
+          title: '反馈列表',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      }]
+
+  },
   // {
   //   path: '/permission',
   //   component: Layout,
