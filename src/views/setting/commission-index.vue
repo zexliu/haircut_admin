@@ -138,6 +138,12 @@ const defaultDiscountForm = {
   count: 1,
   discount: 0.01
 }
+const defaultBasicForm = {
+  shopCommissionProportion: null,
+  userCommissionProportion: null,
+  userFirstAmount: null,
+  shopFreeMonth: null
+}
 export default {
   data() {
     return {
@@ -145,7 +151,7 @@ export default {
       tableData: [],
       total: null,
       basic: {},
-      basicForm: {},
+      basicForm: Object.assign({}, defaultBasicForm),
       discountForm: Object.assign({}, defaultDiscountForm),
       currentDiscountId: null,
       basicDialogVisible: false,

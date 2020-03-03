@@ -620,6 +620,39 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/popularize',
+    component: Layout,
+    redirect: '/popularize/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'Popularize',
+    meta: {
+      title: '推广管理',
+      icon: 'popularize',
+      roles: ['ADMIN'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'user/index',
+        component: () => import('@/views/popularize/user-index'),
+        name: 'PopularizeUserList',
+        meta: {
+          icon: 'user',
+          title: '用户拉新',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'shop/index',
+        component: () => import('@/views/popularize/shop-index'),
+        name: 'PopularizeShopList',
+        meta: {
+          icon: 'shop',
+          title: '店铺拉新',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      }]
+
+  },
+  {
     path: '/feedback',
     component: Layout,
     redirect: '/feedback/index',
