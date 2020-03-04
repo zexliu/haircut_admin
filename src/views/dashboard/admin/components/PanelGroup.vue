@@ -1,52 +1,52 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('users')">
+      <div class="card-panel" @click="handleSetLineChartOptions('users')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            用户数量
+            注册用户
           </div>
           <count-to :start-val="0" :end-val="users" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shops')">
+      <div class="card-panel" @click="handleSetLineChartOptions('shops')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="shop" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            店铺数量
+            入驻店铺
           </div>
           <count-to :start-val="0" :end-val="shops" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('transactions')">
+      <div class="card-panel" @click="handleSetLineChartOptions('transactions')">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            收益合计
+            平台收益
           </div>
           <count-to :start-val="0" :end-val="transactions" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('orders')">
+      <div class="card-panel" @click="handleSetLineChartOptions('orders')">
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="order" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            订单数量
+            订单金额
           </div>
           <count-to :start-val="0" :end-val="orders" :duration="3600" class="card-panel-num" />
         </div>
@@ -81,8 +81,8 @@ export default {
   },
 
   methods: {
-    handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+    handleSetLineChartOptions(type) {
+      this.$emit('handleSetLineChartOptions', type)
     }
 
   }

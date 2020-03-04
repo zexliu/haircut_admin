@@ -1,41 +1,48 @@
 <template>
   <el-table :data="list" style="width: 100%;padding-top: 15px;">
-    <el-table-column label="Order_No" min-width="200">
+    <el-table-column label="订单编号" min-width="200">
       <template slot-scope="scope">
-        {{ scope.row.order_no | orderNoFilter }}
+        {{ scope.row.id }}
       </template>
     </el-table-column>
-    <el-table-column label="Price" width="195" align="center">
+    <el-table-column label="订单金额" width="195" align="center">
       <template slot-scope="scope">
-        ¥{{ scope.row.price | toThousandFilter }}
+        ¥{{ scope.row.amount | toThousandFilter }}
       </template>
     </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="{row}">
-        <el-tag :type="row.status | statusFilter">
-          {{ row.status }}
-        </el-tag>
+    <el-table-column
+      label="订单类型"
+      width="100"
+    >
+      <template slot-scope="scope">
+        <el-tag v-if="scope.row.orderType === 'SHOP_SERVICE'">店铺服务</el-tag>
+        <el-tag v-else-if="scope.row.orderType === 'SHOP_GROUPON'" type="success">团购服务</el-tag>
+        <el-tag v-else-if="scope.row.orderType === 'USER_RECHARGE'" type="info">用户充值</el-tag>
+        <el-tag v-else-if="scope.row.orderType === 'USER_FLOWER'" type="warning">购买鲜花</el-tag>
+        <!-- <el-tag v-else type="danger">否</el-tag> -->
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="订单状态"
+      width="100"
+    >
+      <template slot-scope="scope">
+        <el-tag v-if="scope.row.status === 'PENDING'">待支付</el-tag>
+        <el-tag v-else-if="scope.row.status === 'PAID'" type="success">已支付</el-tag>
+        <el-tag v-else-if="scope.row.status === 'REFUND'" type="info">已退款</el-tag>
+        <el-tag v-else-if="scope.row.status === 'EXPIRE'" type="warning">已超时</el-tag>
+        <el-tag v-else-if="scope.row.status === 'CANCEL'" type="danger">已取消</el-tag>
+        <!-- <el-tag v-else type="danger">否</el-tag> -->
       </template>
     </el-table-column>
   </el-table>
 </template>
 
 <script>
-import { transactionList } from '@/api/remote-search'
+import { fetchList } from '@/api/order'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        success: 'success',
-        pending: 'danger'
-      }
-      return statusMap[status]
-    },
-    orderNoFilter(str) {
-      return str.substring(0, 30)
-    }
-  },
+
   data() {
     return {
       list: null
@@ -46,8 +53,8 @@ export default {
   },
   methods: {
     fetchData() {
-      transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8)
+      fetchList({ current: 1, size: 8 }).then(response => {
+        this.list = response.records
       })
     }
   }
