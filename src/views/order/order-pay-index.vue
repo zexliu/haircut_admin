@@ -137,7 +137,8 @@
             <el-tag v-if="scope.row.channelType === 'WEI_XIN'">微信</el-tag>
             <el-tag v-else-if="scope.row.channelType === 'WALLET'" type="success">钱包</el-tag>
           </template>
-        </el-table-column><el-table-column
+        </el-table-column>
+        <el-table-column
           label="订单状态"
           width="100"
         >
