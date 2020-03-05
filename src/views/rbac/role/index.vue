@@ -31,7 +31,7 @@
         <el-table-column
           prop="name"
           label="名称"
-          width="120"
+          width="180"
         />
         <el-table-column
           prop="seq"

@@ -170,7 +170,7 @@ export const asyncRoutes = [
         meta: {
           title: '修改用户',
           icon: 'people',
-          roles: ['admin']
+          roles: ['ADMIN']
         }
       },
       {
@@ -618,7 +618,51 @@ export const asyncRoutes = [
 
     ]
   },
+  {
+    path: '/banner',
+    component: Layout,
+    redirect: '/banner/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'Banner',
+    meta: {
+      title: '轮播图设置',
+      icon: 'link',
+      roles: ['ADMIN'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'index',
+        component: () => import('@/views/banner/index'),
+        name: 'Banner',
+        meta: {
+          icon: 'list',
+          title: '轮播列表',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'add',
+        component: () => import('@/views/banner/add'),
+        name: 'AddBanner',
+        hidden: true,
+        meta: {
+          title: '新增轮播',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'update',
+        component: () => import('@/views/banner/update'),
+        name: 'UpdateBanner',
+        hidden: true,
+        meta: {
+          title: '修改轮播',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      }
 
+    ]
+
+  },
   {
     path: '/popularize',
     component: Layout,
@@ -675,6 +719,7 @@ export const asyncRoutes = [
       }]
 
   },
+
   // {
   //   path: '/permission',
   //   component: Layout,

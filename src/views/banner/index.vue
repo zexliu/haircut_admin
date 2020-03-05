@@ -19,8 +19,38 @@
         <el-table-column
           prop="name"
           label="名称"
-          width="180"
+          width="120"
         />
+
+        <el-table-column
+          prop="image"
+          label="图片"
+          width="80"
+        >
+          <template slot-scope="scope">
+            <el-image
+              style="width: 60px; height: 60px"
+              :src="scope.row.image"
+              fit="cover"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="linkUrl"
+          label="链接"
+          width="300"
+        />
+        <el-table-column
+          label="可用状态"
+          width="100"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.enableStatus"
+              @change="onEnableStatusChanged(scope.$index, scope.row)"
+            />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="seq"
           label="排序"
@@ -37,18 +67,18 @@
         </el-table-column>
 
         <el-table-column
-          prop="remark"
-          label="备注"
+          prop="description"
+          label="描述"
         />
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="200" fixed="right" align="center">
           <template slot-scope="scope">
-            <router-link :to="'/rbac/groups/update/'+scope.row.id">
+            <router-link :to="'/banner/update/'+scope.row.id">
               <el-button>编辑</el-button>
             </router-link>
             <el-button type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+
           </template>
         </el-table-column>
-
       </el-table>
     </div>
     <div class="pagination-container">
@@ -67,7 +97,7 @@
 </template>
 
 <script>
-import { fetchList, remove } from '@/api/user-group'
+import { fetchList, remove, updateEnableStatus } from '@/api/banner'
 
 const defaultListQuery = {
   current: 1,
@@ -89,15 +119,11 @@ export default {
       const data = await fetchList(this.listQuery)
       this.total = data.total
       this.tableData = data.records
-    }, handleSearch() {
-      this.listQuery.current = 1
-      this.getList()
     },
-    handleResetSearch() {
-      this.listQuery = Object.assign({}, defaultListQuery)
-    }, handleAdd() {
-      this.$router.push({ path: '/rbac/groups/add' })
-    }, handleSizeChange(val) {
+    handleAdd() {
+      this.$router.push({ path: '/banner/add' })
+    },
+    handleSizeChange(val) {
       this.listQuery.size = val
       this.listQuery.current = 1
       this.getList()
@@ -105,7 +131,19 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.current = val
       this.getList()
-    }, handleDelete(index, row) {
+    },
+    onEnableStatusChanged(id, row) {
+      updateEnableStatus(row.id, { enableStatus: row.enableStatus }).then(respones => {
+        this.$notify({
+          message: '提交成功',
+          type: 'success',
+          duration: 1000
+        })
+      }).catch(e => {
+        this.getList()
+      })
+    },
+    handleDelete(index, row) {
       this.$confirm('是否要删除该分类', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

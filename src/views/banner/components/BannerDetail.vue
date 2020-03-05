@@ -1,27 +1,22 @@
 <template>
-  <el-card class="large-form-container" shadow="never">
+  <el-card class="form-container" shadow="never">
+
     <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-      <el-form-item label="用户组名称：" prop="name">
+      <el-form-item label="名称：" prop="name">
         <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item label="图片：" prop="image">
+        <avatar-upload v-model="form.image" />
+      </el-form-item>
+      <el-form-item label="链接：" prop="description">
+        <el-input v-model="form.linkUrl" />
+      </el-form-item>
+      <el-form-item label="描述：" prop="description">
+        <el-input v-model="form.description" />
       </el-form-item>
       <el-form-item label="排序：" prop="seq">
         <el-input-number v-model="form.seq" :min="0" :max="99999999" :precision="0" :controls="false" />
       </el-form-item>
-      <el-form-item label="备注：" prop="remark">
-        <el-input v-model="form.remark" />
-      </el-form-item>
-      <el-form-item label="关联角色：">
-        <el-tree
-          ref="tree"
-          :data="roleTree"
-          show-checkbox
-          node-key="id"
-          :default-checked-keys="form.roleIds"
-          :props="treeProps"
-          default-expand-all
-        />
-      </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onSubmit('form')">提交</el-button>
         <el-button v-if="!isEdit" @click="resetForm('form')">重置</el-button>
@@ -31,17 +26,20 @@
 </template>
 
 <script>
-import { tree } from '@/api/role'
-import { create, update, fetchDetail } from '@/api/user-group'
+import { fetchDetail, create, update } from '@/api/banner'
+import AvatarUpload from '@/components/Upload/AvatarUpload'
 
 const defaultForm = {
   name: null,
+  description: null,
+  icon: null,
+  groupStatus: true,
   seq: 0,
-  roleIds: [],
-  remark: null
+  linkUrl: null
 }
 export default {
-  name: 'UserGroupDetail',
+  name: 'ServiceProjectDetail',
+  components: { AvatarUpload },
   props: {
     isEdit: {
       type: Boolean,
@@ -54,7 +52,7 @@ export default {
       form: Object.assign({}, defaultForm),
       rules: {
         name: [
-          { required: true, message: '请输入用户组名称', trigger: 'blur' },
+          { required: true, message: '请输入名称', trigger: 'blur' },
           {
             min: 2,
             max: 20,
@@ -62,45 +60,40 @@ export default {
             trigger: 'blur'
           }
         ],
-        remark: [{
-          max: 200,
-          message: '长度在 200 个字符以内',
-          trigger: 'blur'
-        }]
-      },
-      options: [],
-      roleTree: [],
-      treeProps: {
-        children: 'children',
-        label: 'name'
+        image: [
+          { required: true, message: '请上传图片', trigger: 'blur' }
+
+        ],
+        description: [
+          {
+            min: 6,
+            max: 200,
+            message: '长度在 6 到 200 个字符',
+            trigger: 'blur'
+          }
+        ]
       }
 
     }
   },
 
   created() {
-    this.fetchRoleTree()
     if (this.isEdit) {
       this.id = this.$route.params && this.$route.params.id
       fetchDetail(this.id).then(response => {
         this.form.name = response.name
-        this.form.parentId = response.parentId
+        this.form.image = response.image
+        this.form.description = response.description
         this.form.seq = response.seq
-        this.form.roleIds = response.roleIds
+        this.form.linkUrl = response.linkUrl
       })
     }
   },
   methods: {
-    fetchRoleTree() {
-      tree().then(response => {
-        this.roleTree = response
-      })
-    },
 
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.form = Object.assign({}, defaultForm)
-      this.$refs.tree.setCheckedKeys([])
     },
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -110,9 +103,6 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            // 组装数据 keys数组中排除权限模块的数据 值提交权限
-            const list = this.$refs.tree.getCheckedKeys()
-            this.form.roleIds = list
             if (this.isEdit) {
               update(this.id, this.form).then(() => {
                 this.$notify({
@@ -124,10 +114,7 @@ export default {
               })
             } else {
               create(this.form).then(() => {
-                this.$refs[formName].resetFields()
                 this.form = Object.assign({}, defaultForm)
-                this.form.roleIds = []
-                this.$refs.tree.setCheckedKeys([])
                 this.$notify({
                   message: '提交成功',
                   type: 'success',
@@ -152,6 +139,6 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
 </style>
