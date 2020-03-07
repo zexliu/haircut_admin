@@ -60,11 +60,11 @@
         </el-form-item>
         <el-form-item label="性别：">
           <el-select
-            v-model="listQuery.sexType"
+            v-model="listQuery.genderType"
             placeholder="请选择"
           >
             <el-option
-              v-for="item in sexTypes"
+              v-for="item in genderTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -232,7 +232,7 @@ const defaultListQuery = {
   stylistId: null,
   userId: null,
   status: null,
-  sexType: null,
+  genderType: null,
   startAt: null,
   endAt: null,
   current: 1,
@@ -269,7 +269,7 @@ export default {
           label: '已取消'
         }
       ],
-      sexTypes: [
+      genderTypes: [
         {
           value: 'MALE',
           label: '男士'

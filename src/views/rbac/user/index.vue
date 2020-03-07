@@ -73,6 +73,21 @@
           label="手机号码"
         />
         <el-table-column
+          width="100"
+          prop="gender"
+          label="性别"
+        >
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.gender === 'MALE'" type="info">
+              男士
+            </el-tag>
+            <el-tag v-if="scope.row.gender === 'FEMALE'" type="success">
+              女士
+            </el-tag>
+            <!-- <el-tag :type="scope.row.gender ? 'info' : 'success' "> {{ scope.row.gender ? '男' : '未锁定' }}</el-tag> -->
+          </template>
+        </el-table-column>
+        <el-table-column
           width="120"
           label="创建时间"
         >

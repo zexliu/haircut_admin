@@ -66,7 +66,7 @@
         />
         <el-table-column label="操作" width="200" fixed="right" align="center">
           <template slot-scope="scope">
-            <router-link :to="'/setting/service/projec/update/'+scope.row.id">
+            <router-link :to="'/setting/service/project/update/'+scope.row.id">
               <el-button>编辑</el-button>
             </router-link>
           </template>

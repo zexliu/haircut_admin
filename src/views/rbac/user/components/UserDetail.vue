@@ -14,12 +14,23 @@
       <el-form-item label="头像：" prop="avatar">
         <avatar-upload v-model="form.avatar" />
       </el-form-item>
+      <el-form-item label="性别：" prop="gender">
+        <el-select v-model="form.gender" multiple placeholder="请选择">
+          <el-option
+            v-for="item in genderOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="邮箱：" prop="email">
         <el-input v-model="form.email" />
       </el-form-item>
       <el-form-item label="手机号码：" prop="mobile">
         <el-input v-model="form.mobile" />
       </el-form-item>
+
       <el-form-item label="可用状态：" prop="enable">
         <el-switch
           v-model="form.enable"
@@ -157,7 +168,13 @@ export default {
         children: 'children',
         label: 'name'
       },
-      userGroups: []
+      userGroups: [],
+      genderOptions: [
+        { label: '男',
+          value: 'MALE' },
+        { label: '女',
+          value: 'FEMALE' }
+      ]
 
     }
   },
