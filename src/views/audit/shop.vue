@@ -38,44 +38,63 @@
         stripe
         style="width: 100%"
       >
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-form inline class="demo-table-expand">
+              <el-form-item label="详细地址：">
+                <span>{{ scope.row.address }}</span>
+              </el-form-item>
+              <el-form-item label="社会信用代码：">
+                <span>{{ scope.row.socialCreditCode }}</span>
+              </el-form-item>
+              <el-form-item label="营业执照：">
+                <el-image
+                  style="width: 340px; height: 480px"
+                  :src="scope.row.businessLicense"
+                  fit="cover"
+                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
+                />
+              </el-form-item>
+              <el-form-item label="门店照片：">
+                <el-image
+                  style="width: 340px; height: 480px"
+                  :src="scope.row.photo"
+                  fit="cover"
+                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
+                />
+              </el-form-item>
+
+              <el-form-item label="身份证正面：">
+                <el-image
+                  style="width: 340px; height: 216px"
+                  :src="scope.row.identityCardFront"
+                  fit="cover"
+                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
+                />
+              </el-form-item>
+              <el-form-item label="身份证反面：">
+                <el-image
+                  style="width: 340px; height: 216px"
+                  :src="scope.row.identityCardBack"
+                  fit="cover"
+                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
+                />
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="id"
           label="ID"
           width="180"
         />
+
         <el-table-column
           prop="name"
           label="名称"
           width="120"
         />
-        <el-table-column
-          prop="photo"
-          label="门店照片"
-          width="80"
-        >
-          <template slot-scope="scope">
-            <el-image
-              style="width: 60px; height: 60px"
-              :src="scope.row.photo"
-              fit="cover"
-              :preview-src-list="[scope.row.photo,scope.row.businessLicense]"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="businessLicense"
-          label="营业执照"
-          width="80"
-        >
-          <template slot-scope="scope">
-            <el-image
-              style="width: 60px; height: 60px"
-              :src="scope.row.businessLicense"
-              fit="cover"
-              :preview-src-list="[scope.row.businessLicense,scope.row.photo]"
-            />
-          </template>
-        </el-table-column>
+
         <el-table-column
           prop="leaderName"
           label="负责人姓名"
@@ -128,12 +147,6 @@
         </el-table-column>
 
         <el-table-column
-          prop="address"
-          width="300"
-          label="地址"
-        />
-
-        <el-table-column
           width="120"
           label="创建时间"
         >
@@ -141,7 +154,7 @@
             {{ scope.row.createAt | timeFormatter }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right" align="center">
+        <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
             <el-button
               :disabled="scope.row.auditStatus !== 'PENDING'"
@@ -296,5 +309,16 @@ export default {
 </script>
 
 <style>
-
+.demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 120px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
 </style>

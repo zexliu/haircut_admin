@@ -614,6 +614,36 @@ export const asyncRoutes = [
           title: '抽成设置',
           roles: ['ADMIN'] // or you can only set roles in sub nav
         }
+      },
+      {
+        path: 'half/index',
+        component: () => import('@/views/setting/half-time-index'),
+        name: 'HalfTime',
+        meta: {
+          icon: 'time',
+          title: '半价时间',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'half/add',
+        component: () => import('@/views/setting/half-time-add'),
+        name: 'HalfTimeAdd',
+        hidden: true,
+        meta: {
+          title: '新增半价时间',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'half/update/:id(\\d+)',
+        component: () => import('@/views/setting/half-time-update'),
+        name: 'HalfTimeUpdate',
+        hidden: true,
+        meta: {
+          title: '更新半价时间',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
       }
 
     ]

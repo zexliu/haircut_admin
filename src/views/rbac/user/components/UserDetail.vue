@@ -15,7 +15,7 @@
         <avatar-upload v-model="form.avatar" />
       </el-form-item>
       <el-form-item label="性别：" prop="gender">
-        <el-select v-model="form.gender" multiple placeholder="请选择">
+        <el-select v-model="form.gender" placeholder="请选择">
           <el-option
             v-for="item in genderOptions"
             :key="item.value"
