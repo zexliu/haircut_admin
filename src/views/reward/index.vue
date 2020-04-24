@@ -5,48 +5,6 @@
         <el-form-item>
           <i class="el-icon-search" />
         </el-form-item>
-        <el-form-item label="关键字：">
-          <el-input v-model="listQuery.keywords" placeholder="订单号/渠道订单号" />
-        </el-form-item>
-        <el-form-item label="订单类型：">
-          <el-select
-            v-model="listQuery.orderType"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in orderTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="订单状态：">
-          <el-select
-            v-model="listQuery.orderStatus"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in orderStatus"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="支付渠道：">
-          <el-select
-            v-model="listQuery.channelType"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in channelTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
         <el-form-item label="所属用户：">
           <el-select
             v-model="listQuery.userId"
@@ -62,6 +20,26 @@
               :key="item.id"
               :label="item.nickname"
               :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="悬赏状态：">
+          <el-select v-model="listQuery.rewardStatus" placeholder="请选择">
+            <el-option
+              v-for="item in rewardStatus"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="发布状态：">
+          <el-select v-model="listQuery.publishStatus" placeholder="请选择">
+            <el-option
+              v-for="item in publishStatus"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
           </el-select>
         </el-form-item>
@@ -98,71 +76,126 @@
         :data="tableData"
         stripe
         style="width: 100%"
-        :summary-method="getSummaries"
-        show-summary
       >
+
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-form inline class="demo-table-expand">
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label="性别：">
+                    <el-tag v-if="scope.row.genderType === 'UN_KNOW'">未知</el-tag>
+                    <el-tag v-else-if="scope.row.genderType === 'MALE'" type="success">男士</el-tag>
+                    <el-tag v-else-if="scope.row.genderType === 'FEMALE'" type="info">女士</el-tag>
+                  </el-form-item>
+
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="身高：">
+                    {{ scope.row.height }}
+                  </el-form-item>
+
+                </el-col>
+
+                <el-col :span="8">
+                  <el-form-item label="体重：">
+                    {{ scope.row.weight }}
+                  </el-form-item>
+                </el-col>
+
+              </el-row>
+
+              <el-row>
+                <el-col :span="8">
+
+                  <el-form-item label="职业：">
+                    {{ scope.row.job }}
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+
+                  <el-form-item label="发量：">
+                    {{ scope.row.hairVolume }}
+                  </el-form-item>
+                </el-col>
+
+                <el-col :span="8">
+                  <el-form-item label="年龄：">
+                    {{ scope.row.age }}
+                  </el-form-item>
+                </el-col>
+
+              </el-row>
+              <el-row>
+                <el-form-item label="内容：">
+                  <span>{{ scope.row.content }}</span>
+                </el-form-item>
+              </el-row>
+
+              <el-row>
+                <el-form-item v-if="scope.row.images" label="图片：">
+                  <el-image
+                    v-for="(item,index) in scope.row.images.split(',')"
+                    :key="index"
+                    style="width: 90px; height: 90px"
+                    :src="item"
+                    fit="cover"
+                    :preview-src-list="scope.row.images.split(',')"
+                  />
+                </el-form-item>
+              </el-row>
+
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="id"
           label="ID"
           width="180"
         />
         <el-table-column
-          prop="amount"
-          label="金额（元）"
-          width="100"
+          prop="orderId"
+          label="订单ID"
+          width="180"
         />
         <el-table-column
           prop="userId"
           label="用户ID"
           width="180"
         />
-
         <el-table-column
-          label="订单类型"
+          prop="nickname"
+          label="用户昵称"
           width="100"
-        >
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.orderType === 'SHOP_SERVICE'">店铺服务</el-tag>
-            <el-tag v-else-if="scope.row.orderType === 'SHOP_GROUPON'" type="success">团购服务</el-tag>
-            <el-tag v-else-if="scope.row.orderType === 'USER_RECHARGE'" type="info">用户充值</el-tag>
-            <el-tag v-else-if="scope.row.orderType === 'USER_FLOWER'" type="warning">购买鲜花</el-tag>
-            <!-- <el-tag v-else type="danger">否</el-tag> -->
-          </template>
-        </el-table-column>
+        />
         <el-table-column
-          label="支付渠道"
-          width="100"
-        >
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.channelType === 'WEI_XIN'">微信</el-tag>
-            <el-tag v-else-if="scope.row.channelType === 'WALLET'" type="success">钱包</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="订单状态"
-          width="100"
-        >
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 'PENDING'">待支付</el-tag>
-            <el-tag v-else-if="scope.row.status === 'PAID'" type="success">已支付</el-tag>
-            <el-tag v-else-if="scope.row.status === 'REFUND'" type="info">已退款</el-tag>
-            <el-tag v-else-if="scope.row.status === 'EXPIRE'" type="warning">已超时</el-tag>
-            <el-tag v-else-if="scope.row.status === 'CANCEL'" type="danger">已取消</el-tag>
-            <!-- <el-tag v-else type="danger">否</el-tag> -->
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="thirdPartyId"
-          label="渠道单号"
+          prop="rewardAmount"
+          label="悬赏金额（元）"
           width="120"
         />
 
-        <!-- <el-table-column
-          prop="subject"
-          label="主题"
-          width="120"
-        /> -->
+        <el-table-column
+          label="悬赏状态"
+          width="100"
+        >
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.rewardStatus === 'PENDING_REWARD'">待悬赏</el-tag>
+            <el-tag v-else-if="scope.row.rewardStatus === 'REWARDED'" type="success">已悬赏</el-tag>
+            <!-- <el-tag v-else type="danger">否</el-tag> -->
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          label="发布状态"
+          width="100"
+        >
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.publishStatus === 'PENDING_PAY'">待支付</el-tag>
+            <el-tag v-else-if="scope.row.publishStatus === 'PUBLISHED'" type="success">已发布</el-tag>
+            <el-tag v-else-if="scope.row.publishStatus === 'CANCEL'" type="info">已取消</el-tag>
+            <!-- <el-tag v-else type="danger">否</el-tag> -->
+          </template>
+        </el-table-column>
 
         <el-table-column
           width="120"
@@ -172,27 +205,12 @@
             {{ scope.row.createAt | timeFormatter }}
           </template>
         </el-table-column>
-        <el-table-column
-          width="120"
-          label="支付时间"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.payAt | timeFormatter }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="120"
-          label="过期时间"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.expireAt | timeFormatter }}
-          </template>
-        </el-table-column>
-        <!-- <el-table-column label="操作" width="200" fixed="right" align="center">
+
+        <el-table-column label="操作" width="200" fixed="right" align="center">
           <template slot-scope="scope">
             <el-button type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
     </div>
     <div class="pagination-container">
@@ -212,14 +230,16 @@
 
 <script>
 import { fetchList as fetchUserList } from '@/api/user'
-import { fetchList } from '@/api/order'
+import { fetchList, remove } from '@/api/reward'
 
 const defaultListQuery = {
   keywords: null,
-  orderType: null,
-  orderStatus: null,
+  shopId: null,
+  stylistId: null,
   userId: null,
-  channelType: null,
+  serviceId: null,
+  status: null,
+  genderType: null,
   startAt: null,
   endAt: null,
   current: 1,
@@ -227,59 +247,37 @@ const defaultListQuery = {
 
 }
 export default {
+
   data() {
     return {
+
       listQuery: Object.assign({}, defaultListQuery),
       tableData: [],
       loading: false,
       total: null,
       users: [],
+      shops: [],
       timeRange: [],
-      orderTypes: [
+      services: [],
+      publishStatus: [
         {
-          value: 'SHOP_SERVICE',
-          label: '店铺服务'
-        },
-        {
-          value: 'SHOP_GROUPON',
-          label: '团购服务'
-        },
-        {
-          value: 'USER_RECHARGE',
-          label: '用户充值'
-        },
-        {
-          value: 'USER_FLOWER',
-          label: '购买鲜花'
-        }
-      ],
-      orderStatus: [
-        {
-          value: 'PENDING',
+          value: 'PENDING_PAY',
           label: '待支付'
         }, {
-          value: 'PAID',
-          label: '已支付'
+          value: 'PUBLISHED',
+          label: '已发布'
         }, {
-          value: 'REFUND',
-          label: '已退款'
-        },
-        {
-          value: 'EXPIRE',
-          label: '已超时'
-        },
-        {
           value: 'CANCEL',
           label: '已取消'
         }
       ],
-      channelTypes: [
+      rewardStatus: [
         {
-          value: 'WEI_XIN',
-          label: '微信'
+          value: 'PENDING_REWARD',
+          label: '待悬赏'
         }, {
-          value: 'WALLET',
-          label: '钱包'
+          value: 'REWARDED',
+          label: '已悬赏'
         }
       ], pickerOptions: {
         shortcuts: [{
@@ -315,6 +313,7 @@ export default {
     this.getList()
   },
   methods: {
+
     remoteMethod(query) {
       if (query !== '') {
         this.loading = true
@@ -326,7 +325,6 @@ export default {
         this.users = []
       }
     },
-
     async getList() {
       const data = await fetchList(this.listQuery)
       this.total = data.total
@@ -358,26 +356,22 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.current = val
       this.getList()
-    }, getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计'
-          return
-        } else if (index === 1) {
-          let total = 0
-          data.forEach(element => {
-            total += element.amount
+    },
+    handleDelete(index, row) {
+      this.$confirm('是否要删除该动态?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        remove(row.id).then(() => {
+          this.$notify({
+            message: '删除成功',
+            type: 'success',
+            duration: 1000
           })
-          sums[index] = total.toFixed(2)
-        //   const values = data.map(item => Number(item[column.property]))
-        } else {
-          sums[index] = ''
-        }
+          this.getList()
+        })
       })
-
-      return sums
     }
   }
 }

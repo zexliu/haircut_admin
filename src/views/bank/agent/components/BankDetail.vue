@@ -2,17 +2,17 @@
   <el-card class="form-container" shadow="never">
 
     <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-      <el-form-item label="名称：" prop="name">
-        <el-input v-model="form.name" />
+      <el-form-item label="银行名称：" prop="brandName">
+        <el-input v-model="form.brandName" />
       </el-form-item>
-      <el-form-item label="图标：" prop="icon">
-        <avatar-upload v-model="form.icon" />
+      <el-form-item label="银行卡号：" prop="brandNo">
+        <el-input v-model="form.brandNo" />
       </el-form-item>
-      <el-form-item label="描述：" prop="description">
-        <el-input v-model="form.description" />
+      <el-form-item label="开户人姓名：" prop="brandUsername">
+        <el-input v-model="form.brandUsername" />
       </el-form-item>
-      <el-form-item label="排序：" prop="seq">
-        <el-input-number v-model="form.seq" :min="0" :max="99999999" :precision="0" :controls="false" />
+      <el-form-item label="开户行名称：" prop="brandOpening">
+        <el-input v-model="form.brandOpening" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit('form')">提交</el-button>
@@ -23,19 +23,16 @@
 </template>
 
 <script>
-import { fetchDetail, create, update } from '@/api/shop-title'
-import AvatarUpload from '@/components/Upload/AvatarUpload'
+import { fetchDetail, create, update } from '@/api/bank'
 
 const defaultForm = {
-  name: null,
-  description: null,
-  icon: null,
-  seq: 0,
-  type: 'DEFAULT'
+  brandName: null,
+  brandNo: null,
+  brandUsername: null,
+  brandOpening: null
 }
 export default {
-  name: 'ShopTitleDetail',
-  components: { AvatarUpload },
+  name: 'BankDetail',
   props: {
     isEdit: {
       type: Boolean,
@@ -47,8 +44,8 @@ export default {
       id: null,
       form: Object.assign({}, defaultForm),
       rules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' },
+        brandName: [
+          { required: true, message: '请输入银行名称', trigger: 'blur' },
           {
             min: 2,
             max: 20,
@@ -56,11 +53,30 @@ export default {
             trigger: 'blur'
           }
         ],
-        description: [
+        brandNo: [
+          { required: true, message: '请输入银行卡号', trigger: 'blur' },
           {
-            min: 6,
-            max: 200,
-            message: '长度在 6 到 200 个字符',
+            min: 15,
+            max: 32,
+            message: '长度在 15 到 32 个字符',
+            trigger: 'blur'
+          }
+        ],
+        brandUsername: [
+          { required: true, message: '开户人姓名', trigger: 'blur' },
+          {
+            min: 2,
+            max: 20,
+            message: '请输入开户人姓名',
+            trigger: 'blur'
+          }
+        ],
+        brandOpening: [
+          { required: true, message: '请输入开户行名称', trigger: 'blur' },
+          {
+            min: 2,
+            max: 20,
+            message: '长度在 2 到 20 个字符',
             trigger: 'blur'
           }
         ]
@@ -73,19 +89,15 @@ export default {
     if (this.isEdit) {
       this.id = this.$route.params && this.$route.params.id
       fetchDetail(this.id).then(response => {
-        this.form.name = response.name
-        this.form.icon = response.icon
-        this.form.description = response.description
-        this.form.seq = response.seq
-        this.form.type = response.type
+        this.form = response
       })
     }
   },
   methods: {
-
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.form = Object.assign({}, defaultForm)
+      this.$refs.tree.setCheckedKeys([])
     },
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -95,6 +107,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            // 组装数据 keys数组中排除权限模块的数据 值提交权限
             if (this.isEdit) {
               update(this.id, this.form).then(() => {
                 this.$notify({
@@ -106,6 +119,7 @@ export default {
               })
             } else {
               create(this.form).then(() => {
+                this.$refs[formName].resetFields()
                 this.form = Object.assign({}, defaultForm)
                 this.$notify({
                   message: '提交成功',

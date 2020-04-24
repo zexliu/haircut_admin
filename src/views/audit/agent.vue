@@ -6,7 +6,7 @@
           <i class="el-icon-search" />
         </el-form-item>
         <el-form-item label="输入搜索：">
-          <el-input v-model="listQuery.keywords" placeholder="店铺名称" />
+          <el-input v-model="listQuery.keywords" placeholder="姓名/电话" />
         </el-form-item>
         <el-form-item label="审核状态：">
           <el-select v-model="listQuery.auditStatus" placeholder="请选择">
@@ -41,54 +41,28 @@
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form inline class="demo-table-expand">
-              <el-form-item label="详细地址：">
-                <span>{{ scope.row.address }}</span>
+              <el-form-item label="申请理由：">
+                <span>{{ scope.row.remark }}</span>
               </el-form-item>
-              <el-form-item label="社会信用代码：">
-                <span>{{ scope.row.socialCreditCode }}</span>
-              </el-form-item>
-              <el-form-item label="营业执照：">
-                <el-image
-                  style="width: 340px; height: 480px"
-                  :src="scope.row.businessLicense"
-                  fit="cover"
-                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
-                />
-              </el-form-item>
-              <el-form-item label="门店照片：">
-                <el-image
-                  style="width: 340px; height: 480px"
-                  :src="scope.row.photo"
-                  fit="cover"
-                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
-                />
-              </el-form-item>
+              <el-row style="marin-top: 99px;">
+                <el-form-item label="身份证正面：">
+                  <el-image
+                    style="width: 340px; height: 216px"
+                    :src="scope.row.identityCardFront"
+                    fit="cover"
+                    :preview-src-list="[scope.row.identityCardFront,scope.row.identityCardBack]"
+                  />
+                </el-form-item>
+                <el-form-item label="身份证反面：">
+                  <el-image
+                    style="width: 340px; height: 216px"
+                    :src="scope.row.identityCardBack"
+                    fit="cover"
+                    :preview-src-list="[scope.row.identityCardFront,scope.row.identityCardBack]"
+                  />
+                </el-form-item>
+              </el-row>
 
-              <el-form-item label="身份证正面：">
-                <el-image
-                  style="width: 340px; height: 216px"
-                  :src="scope.row.identityCardFront"
-                  fit="cover"
-                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
-                />
-              </el-form-item>
-              <el-form-item label="身份证反面：">
-                <el-image
-                  style="width: 340px; height: 216px"
-                  :src="scope.row.identityCardBack"
-                  fit="cover"
-                  :preview-src-list="[scope.row.businessLicense,scope.row.photo,scope.row.identityCardFront,scope.row.identityCardBack]"
-                />
-              </el-form-item>
-              <el-form-item label="门店环境：">
-                <el-image
-                  v-if="scope.row.coverImage"
-                  style="width: 340px; height: 216px"
-                  :src="scope.row.coverImage.split(',')[0]"
-                  fit="cover"
-                  :preview-src-list="scope.row.coverImage.split(',')"
-                />
-              </el-form-item>
             </el-form>
           </template>
         </el-table-column>
@@ -105,14 +79,19 @@
         />
 
         <el-table-column
-          prop="leaderName"
-          label="负责人姓名"
-          width="100"
-        />
-        <el-table-column
-          prop="leaderMobile"
+          prop="linkMobile"
           label="联系电话"
           width="120"
+        />
+        <el-table-column
+          prop="email"
+          label="邮箱"
+          width="150"
+        />
+        <el-table-column
+          prop="identityCardNo"
+          label="身份证号"
+          width="150"
         />
         <el-table-column
           label="审核状态"
@@ -144,17 +123,6 @@
             </slot>
           </template>
         </el-table-column>
-        <el-table-column
-          width="100"
-          label="区"
-        >
-          <template slot-scope="scope">
-            <slot>
-              {{ getRegionName(scope.row.districtCode) }}
-            </slot>
-          </template>
-        </el-table-column>
-
         <el-table-column
           width="120"
           label="创建时间"
@@ -195,7 +163,7 @@
 </template>
 
 <script>
-import { fetchApplys as fetchList } from '@/api/shop'
+import { fetchApplys as fetchList } from '@/api/agent'
 import { fetchList as fetchRegionList } from '@/api/region'
 import { audit } from '@/api/audit'
 
@@ -247,7 +215,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        audit({ targetType: 'SHOP', targetId: row.id, auditStatus: 'PASSED' }).then(response => {
+        audit({ targetType: 'AGENT', targetId: row.id, auditStatus: 'PASSED' }).then(response => {
           this.$notify({
             type: 'success',
             message: '审核成功'
@@ -266,7 +234,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(({ value }) => {
-        audit({ targetType: 'SHOP', targetId: row.id, auditStatus: 'REJECTED', message: value }).then(response => {
+        audit({ targetType: 'AGENT', targetId: row.id, auditStatus: 'REJECTED', message: value }).then(response => {
           this.$notify({
             type: 'success',
             message: '审核成功'

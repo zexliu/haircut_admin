@@ -59,21 +59,41 @@
         :data="tableData"
         stripe
         style="width: 100%"
+        :default-expand-all="true"
       >
-
         <el-table-column type="expand">
           <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
+            <el-form>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label="订单ID">
+                    <span>{{ props.row.topicId }}</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="店铺ID">
+                    <span>{{ props.row.shopId }}</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="发型师ID">
+                    <span>{{ props.row.stylistId }}</span>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label="店铺名称">
+                    <span>{{ props.row.shopName }}</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="发型师名称">
+                    <span>{{ props.row.stylistName }}</span>
+                  </el-form-item>
+                </el-col>
 
-              <el-form-item label="订单ID">
-                <span>{{ props.row.topicId }}</span>
-              </el-form-item>
-              <el-form-item label="店铺ID">
-                <span>{{ props.row.shopId }}</span>
-              </el-form-item>
-              <el-form-item label="发型师ID">
-                <span>{{ props.row.stylistId }}</span>
-              </el-form-item>
+              </el-row>
               <el-form-item label="评论内容">
                 <span>{{ props.row.content }}</span>
               </el-form-item>

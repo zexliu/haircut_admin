@@ -6,24 +6,12 @@
           <i class="el-icon-search" />
         </el-form-item>
         <el-form-item label="关键字：">
-          <el-input v-model="listQuery.keywords" placeholder="订单号/渠道订单号" />
+          <el-input v-model="listQuery.keywords" placeholder="订单号/支付单号" />
         </el-form-item>
-        <el-form-item label="订单类型：">
-          <el-select
-            v-model="listQuery.orderType"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in orderTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+
         <el-form-item label="订单状态：">
           <el-select
-            v-model="listQuery.orderStatus"
+            v-model="listQuery.status"
             placeholder="请选择"
           >
             <el-option
@@ -34,16 +22,21 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="支付渠道：">
+        <el-form-item label="所属店铺：">
           <el-select
-            v-model="listQuery.channelType"
-            placeholder="请选择"
+            v-model="listQuery.shopId"
+            placeholder="请输入关键词"
+            filterable
+            remote
+            reserve-keyword
+            :remote-method="remoteMethodShop"
+            :loading="loading"
           >
             <el-option
-              v-for="item in channelTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="item in shops"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -65,6 +58,34 @@
             />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="服务类型：">
+          <el-select
+            v-model="listQuery.serviceId"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in services"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="性别：">
+          <el-select
+            v-model="listQuery.genderType"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in genderTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="时间段：">
           <el-date-picker
             v-model="timeRange"
@@ -109,60 +130,59 @@
         <el-table-column
           prop="amount"
           label="金额（元）"
-          width="100"
+          width="120"
         />
-        <el-table-column
-          prop="userId"
-          label="用户ID"
-          width="180"
-        />
-
-        <el-table-column
-          label="订单类型"
-          width="100"
-        >
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.orderType === 'SHOP_SERVICE'">店铺服务</el-tag>
-            <el-tag v-else-if="scope.row.orderType === 'SHOP_GROUPON'" type="success">团购服务</el-tag>
-            <el-tag v-else-if="scope.row.orderType === 'USER_RECHARGE'" type="info">用户充值</el-tag>
-            <el-tag v-else-if="scope.row.orderType === 'USER_FLOWER'" type="warning">购买鲜花</el-tag>
-            <!-- <el-tag v-else type="danger">否</el-tag> -->
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="支付渠道"
-          width="100"
-        >
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.channelType === 'WEI_XIN'">微信</el-tag>
-            <el-tag v-else-if="scope.row.channelType === 'WALLET'" type="success">钱包</el-tag>
-          </template>
-        </el-table-column>
         <el-table-column
           label="订单状态"
           width="100"
         >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 'PENDING'">待支付</el-tag>
-            <el-tag v-else-if="scope.row.status === 'PAID'" type="success">已支付</el-tag>
+            <el-tag v-if="scope.row.status === 'PENDING_USE'">待使用</el-tag>
+            <el-tag v-else-if="scope.row.status === 'USED'" type="success">已使用</el-tag>
             <el-tag v-else-if="scope.row.status === 'REFUND'" type="info">已退款</el-tag>
-            <el-tag v-else-if="scope.row.status === 'EXPIRE'" type="warning">已超时</el-tag>
-            <el-tag v-else-if="scope.row.status === 'CANCEL'" type="danger">已取消</el-tag>
             <!-- <el-tag v-else type="danger">否</el-tag> -->
           </template>
         </el-table-column>
 
         <el-table-column
-          prop="thirdPartyId"
-          label="渠道单号"
+          prop="remainCount"
+          label="剩余次数"
+          width="100"
+        />
+        <el-table-column
+          prop="totalCount"
+          label="总次数"
+          width="100"
+        />
+        <el-table-column
           width="120"
+          label="服务类型"
+        >
+          <template slot-scope="scope">
+            {{ getServiceName(scope.row.serviceId) }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="userId"
+          label="用户ID"
+          width="180"
+        />
+        <el-table-column
+          prop="shopId"
+          label="店铺ID"
+          width="180"
         />
 
-        <!-- <el-table-column
-          prop="subject"
-          label="主题"
-          width="120"
-        /> -->
+        <el-table-column
+          prop="stylistId"
+          label="发型师ID"
+          width="180"
+        />
+        <el-table-column
+          prop="orderId"
+          label="支付单ID"
+          width="180"
+        />
 
         <el-table-column
           width="120"
@@ -170,14 +190,6 @@
         >
           <template slot-scope="scope">
             {{ scope.row.createAt | timeFormatter }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="120"
-          label="支付时间"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.payAt | timeFormatter }}
           </template>
         </el-table-column>
         <el-table-column
@@ -212,14 +224,20 @@
 
 <script>
 import { fetchList as fetchUserList } from '@/api/user'
-import { fetchList } from '@/api/order'
+import { fetchList as fetchShopList } from '@/api/shop'
+
+import { fetchList } from '@/api/groupon'
+import { fetchList as fetchServiceList } from '@/api/service-projects'
+import { fetchCurrentAgent } from '@/api/agent'
 
 const defaultListQuery = {
   keywords: null,
-  orderType: null,
-  orderStatus: null,
+  shopId: null,
+  stylistId: null,
   userId: null,
-  channelType: null,
+  serviceId: null,
+  status: null,
+  genderType: null,
   startAt: null,
   endAt: null,
   current: 1,
@@ -227,59 +245,38 @@ const defaultListQuery = {
 
 }
 export default {
+
   data() {
     return {
+
       listQuery: Object.assign({}, defaultListQuery),
       tableData: [],
       loading: false,
       total: null,
       users: [],
+      agentInfo: null,
+      shops: [],
       timeRange: [],
-      orderTypes: [
-        {
-          value: 'SHOP_SERVICE',
-          label: '店铺服务'
-        },
-        {
-          value: 'SHOP_GROUPON',
-          label: '团购服务'
-        },
-        {
-          value: 'USER_RECHARGE',
-          label: '用户充值'
-        },
-        {
-          value: 'USER_FLOWER',
-          label: '购买鲜花'
-        }
-      ],
+      services: [],
       orderStatus: [
         {
-          value: 'PENDING',
-          label: '待支付'
+          value: 'PENDING_USE',
+          label: '待使用'
         }, {
-          value: 'PAID',
-          label: '已支付'
+          value: 'USED',
+          label: '已使用'
         }, {
           value: 'REFUND',
           label: '已退款'
-        },
-        {
-          value: 'EXPIRE',
-          label: '已超时'
-        },
-        {
-          value: 'CANCEL',
-          label: '已取消'
         }
       ],
-      channelTypes: [
+      genderTypes: [
         {
-          value: 'WEI_XIN',
-          label: '微信'
+          value: 'MALE',
+          label: '男士'
         }, {
-          value: 'WALLET',
-          label: '钱包'
+          value: 'FEMALE',
+          label: '女士'
         }
       ], pickerOptions: {
         shortcuts: [{
@@ -312,9 +309,36 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.getServices()
+    this.getCurrentAgentInfo()
+    // this.getList()
   },
+
   methods: {
+    getCurrentAgentInfo() {
+      fetchCurrentAgent().then(response => {
+        this.agentInfo = response
+        this.listQuery.cityCode = this.agentInfo.cityCode
+        this.listQuery.provinceCode = this.agentInfo.provinceCode
+        this.getList()
+      })
+    },
+    getServiceName(serviceId) {
+      const res = this.services.find(item => {
+        return item.id === serviceId
+      })
+      if (res) {
+        return res.name
+      } else {
+        return ''
+      }
+    },
+    getServices() {
+      fetchServiceList({ current: 1, size: 1000 }).then(response => {
+        this.loading = false
+        this.services = response.records
+      })
+    },
     remoteMethod(query) {
       if (query !== '') {
         this.loading = true
@@ -326,7 +350,17 @@ export default {
         this.users = []
       }
     },
-
+    remoteMethodShop(query) {
+      if (query !== '') {
+        this.loading = true
+        fetchShopList({ current: 1, size: 20, keywords: query, provinceCode: this.agentInfo.provinceCode, cityCode: this.agentInfo.cityCode }).then(response => {
+          this.loading = false
+          this.shops = response.records
+        })
+      } else {
+        this.shops = []
+      }
+    },
     async getList() {
       const data = await fetchList(this.listQuery)
       this.total = data.total
@@ -339,6 +373,8 @@ export default {
     handleResetSearch() {
       this.selectedRegion = []
       this.listQuery = Object.assign({}, defaultListQuery)
+      this.listQuery.cityCode = this.agentInfo.cityCode
+      this.listQuery.provinceCode = this.agentInfo.provinceCode
       this.timeRange = []
     },
 
@@ -360,6 +396,7 @@ export default {
       this.getList()
     }, getSummaries(param) {
       const { columns, data } = param
+
       const sums = []
       columns.forEach((column, index) => {
         if (index === 0) {

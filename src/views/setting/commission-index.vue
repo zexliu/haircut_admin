@@ -7,6 +7,18 @@
       <el-button type="primary" class="btn-add" @click="handleUpdateBasic()">修改</el-button>
       <el-form label-width="240px" style="margin-top: 20px">
         <el-row>
+
+          <el-col :span="12">
+            <el-form-item label="店铺佣金比例:">
+              {{ basic.shopCommissionProportion }}
+            </el-form-item>
+            <el-form-item label="新店免佣时长(月):">
+              {{ basic.shopFreeMonth }}
+            </el-form-item>
+            <el-form-item label="代理商提成比例:">
+              {{ basic.agentCommissionProportion }}
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="用户拉新首次消费现金奖励(元):">
               {{ basic.userFirstAmount }}
@@ -15,20 +27,11 @@
               {{ basic.userCommissionProportion }}
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="店铺佣金比例:">
-              {{ basic.shopCommissionProportion }}
-            </el-form-item>
-            <el-form-item label="新店免佣时长(月):">
-              {{ basic.shopFreeMonth }}
-            </el-form-item>
-          </el-col>
-
         </el-row>
       </el-form>
 
     </el-card>
-
+    <!--
     <div class="table-container">
       <el-card class="operate-container" shadow="never">
         <i class="el-icon-tickets" />
@@ -85,18 +88,20 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </div>
+    </div> -->
     <el-dialog title="基础信息" :visible.sync="basicDialogVisible">
       <el-form ref="basicForm" :model="basicForm" label-width="200px" :rules="basicRules">
         <el-form-item label="用户首次拉新奖励(元)：" prop="userFirstAmount">
           <el-input-number v-model="basicForm.userFirstAmount" :controls="false" :precision="2" :min="0" :max="9999.99" />
         </el-form-item>
         <el-form-item label="用户拉新消费提成比例：" prop="userCommissionProportion">
-          <el-input-number v-model="basicForm.userCommissionProportion" :controls="false" :precision="2" :min="0" :max="1" />
+          <el-input-number v-model="basicForm.userCommissionProportion" :controls="false" :precision="2" :min="0" :max="0.99" />
         </el-form-item>
         <el-form-item label="店铺佣金比例：" prop="shopCommissionProportion">
-          <el-input-number v-model="basicForm.shopCommissionProportion" :controls="false" :precision="2" :min="0" :max="1" />
-
+          <el-input-number v-model="basicForm.shopCommissionProportion" :controls="false" :precision="2" :min="0" :max="0.99" />
+        </el-form-item>
+        <el-form-item label="代理商提成比例：" prop="agentCommissionProportion">
+          <el-input-number v-model="basicForm.agentCommissionProportion" :controls="false" :precision="2" :min="0" :max="0.99" />
         </el-form-item>
         <el-form-item label="新店免佣时长(月)：" prop="shopFreeMonth">
           <el-input-number v-model="basicForm.shopFreeMonth" :controls="false" :precision="0" :min="0" :max="9999" />
@@ -140,6 +145,7 @@ const defaultDiscountForm = {
 }
 const defaultBasicForm = {
   shopCommissionProportion: null,
+  agentCommissionProportion: null,
   userCommissionProportion: null,
   userFirstAmount: null,
   shopFreeMonth: null
@@ -166,6 +172,9 @@ export default {
         ],
         shopCommissionProportion: [
           { required: true, message: '请输入店铺佣金比例', trigger: 'blur' }
+        ],
+        agentCommissionProportion: [
+          { required: true, message: '请输入代理商提成比例', trigger: 'blur' }
         ],
         shopFreeMonth: [
           { required: true, message: '请输入新店免佣时长', trigger: 'blur' }
@@ -203,6 +212,7 @@ export default {
     },
     handleUpdateBasic() {
       this.basicForm.shopCommissionProportion = this.basic.shopCommissionProportion
+      this.basicForm.agentCommissionProportion = this.basic.agentCommissionProportion
       this.basicForm.userCommissionProportion = this.basic.userCommissionProportion
       this.basicForm.userFirstAmount = this.basic.userFirstAmount
       this.basicForm.shopFreeMonth = this.basic.shopFreeMonth

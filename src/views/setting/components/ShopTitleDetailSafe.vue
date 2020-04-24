@@ -31,7 +31,7 @@ const defaultForm = {
   description: null,
   icon: null,
   seq: 0,
-  type: 'DEFAULT'
+  type: 'SAFETY'
 }
 export default {
   name: 'ShopTitleDetail',

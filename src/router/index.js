@@ -303,6 +303,127 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/agent',
+    component: Layout,
+    redirect: '/audit/index',
+    name: 'Agent',
+    alwaysShow: true,
+    meta: {
+      title: '代理商管理',
+      icon: 'tree',
+      roles: ['ADMIN', 'AGENT'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'info',
+        component: () => import('@/views/agent/agent-info'),
+        name: 'AgentInfo',
+        meta: {
+          icon: 'tree',
+          title: '代理商信息',
+          roles: ['AGENT'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/agent/index'),
+        name: 'AgentList',
+        meta: {
+          icon: 'list',
+          title: '代理商列表',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'update/:id(\\d+)',
+        component: () => import('@/views/agent/update'),
+        name: 'AgentUpdate',
+        hidden: true,
+        meta: {
+          icon: 'tree',
+          title: '更新代理商',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      }
+
+    ]
+  },
+  {
+    path: '/bank',
+    component: Layout,
+    redirect: '/bank/index',
+    name: 'Bank',
+    alwaysShow: true,
+    meta: {
+      title: '银行卡管理',
+      icon: 'bank',
+      roles: ['AGENT'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'index',
+        component: () => import('@/views/bank/agent/index'),
+        name: 'AgentBankList',
+        meta: {
+          icon: 'list',
+          title: '银行卡列表',
+          roles: ['AGENT'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'add',
+        component: () => import('@/views/bank/agent/add'),
+        name: 'BankAdd',
+        hidden: true,
+        meta: {
+          title: '新增银行卡',
+          roles: ['AGENT'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'update/:id(\\d+)',
+        component: () => import('@/views/bank/agent/update'),
+        name: 'BankUpdate',
+        hidden: true,
+        meta: {
+          icon: 'tree',
+          title: '更改银行卡',
+          roles: ['AGENT'] // or you can only set roles in sub nav
+        }
+      }
+
+    ]
+  },
+  {
+    path: '/transaction',
+    component: Layout,
+    redirect: '/transaction/index',
+    name: 'Transaction',
+    meta: {
+      title: '交易管理',
+      icon: 'list',
+      roles: ['ADMIN', 'AGENT'] // you can set roles in root nav
+    }, children: [
+      {
+        path: '/agent/index',
+        component: () => import('@/views/transaction/agent-index'),
+        name: 'AgentTransaction',
+        meta: {
+          icon: 'list',
+          title: '代理商交易记录',
+          roles: ['AGENT'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/transaction/platform-index'),
+        name: 'PlatformTransaction',
+        meta: {
+          title: '平台交易记录',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
     path: '/audit',
     component: Layout,
     redirect: '/audit/shop',
@@ -314,12 +435,32 @@ export const asyncRoutes = [
       roles: ['ADMIN'] // you can set roles in root nav
     }, children: [
       {
+        path: 'withdrawal',
+        component: () => import('@/views/audit/withdrawal'),
+        name: 'Withdrawal',
+        meta: {
+          icon: 'bank',
+          title: '提现申请',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
         path: 'shop',
         component: () => import('@/views/audit/shop'),
         name: 'ShopList',
         meta: {
           icon: 'shop',
           title: '店铺入驻',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'agent',
+        component: () => import('@/views/audit/agent'),
+        name: 'AgentList',
+        meta: {
+          icon: 'people',
+          title: '代理商入驻',
           roles: ['ADMIN'] // or you can only set roles in sub nav
         }
       }
@@ -349,6 +490,29 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/reward',
+    component: Layout,
+    redirect: '/reward/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'Reward',
+    meta: {
+      title: '悬赏动态',
+      icon: 'zip',
+      roles: ['ADMIN'] // you can set roles in root nav
+    }, children: [
+      {
+        path: 'reward/index',
+        component: () => import('@/views/reward/index'),
+        name: 'RewardList',
+        meta: {
+          icon: 'list',
+          title: '动态列表',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
     path: '/order',
     component: Layout,
     redirect: '/order/pay/index',
@@ -357,7 +521,7 @@ export const asyncRoutes = [
     meta: {
       title: '订单管理',
       icon: 'order',
-      roles: ['ADMIN'] // you can set roles in root nav
+      roles: ['ADMIN', 'AGENT'] // you can set roles in root nav
     }, children: [
       {
         path: 'order/pay/index',
@@ -388,6 +552,26 @@ export const asyncRoutes = [
           title: '团购订单',
           roles: ['ADMIN'] // or you can only set roles in sub nav
         }
+      },
+      {
+        path: 'order/service/index',
+        component: () => import('@/views/order/order-service-index-agent'),
+        name: 'OrderServiceList',
+        meta: {
+          icon: 'order-service',
+          title: '服务订单',
+          roles: ['AGENT'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'order/group/index',
+        component: () => import('@/views/order/order-group-index-agent'),
+        name: 'OrderGroupList',
+        meta: {
+          icon: 'order-group',
+          title: '团购订单',
+          roles: ['AGENT'] // or you can only set roles in sub nav
+        }
       }
     ]
   },
@@ -400,7 +584,7 @@ export const asyncRoutes = [
     meta: {
       title: '店铺管理',
       icon: 'shop',
-      roles: ['ADMIN'] // you can set roles in root nav
+      roles: ['ADMIN', 'AGENT'] // you can set roles in root nav
     }, children: [
       {
         path: 'index',
@@ -410,6 +594,16 @@ export const asyncRoutes = [
           icon: 'list',
           title: '店铺列表',
           roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'index',
+        component: () => import('@/views/shop/agent-index'),
+        name: 'ShopList',
+        meta: {
+          icon: 'list',
+          title: '店铺列表',
+          roles: ['AGENT'] // or you can only set roles in sub nav
         }
       },
       {
@@ -540,6 +734,37 @@ export const asyncRoutes = [
         hidden: true,
         meta: {
           title: '修改服务标准',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'shop/title/index/safe',
+        component: () => import('@/views/setting/shop-title-index-safe'),
+        name: 'ShopTitleSafe',
+        meta: {
+          icon: 'component',
+          title: '安全标准',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+
+      {
+        path: 'shop/title/add/safe',
+        component: () => import('@/views/setting/shop-title-add-safe'),
+        name: 'AddShopTitleSafe',
+        hidden: true,
+        meta: {
+          title: '新增安全标准',
+          roles: ['ADMIN'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'shop/title/update/safe/:id(\\d+)',
+        component: () => import('@/views/setting/shop-title-update-safe'),
+        name: 'UpdateShopTitleSafe',
+        hidden: true,
+        meta: {
+          title: '修改安全标准',
           roles: ['ADMIN'] // or you can only set roles in sub nav
         }
       },
@@ -680,7 +905,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'update',
+        path: 'update/:id(\\d+)',
         component: () => import('@/views/banner/update'),
         name: 'UpdateBanner',
         hidden: true,

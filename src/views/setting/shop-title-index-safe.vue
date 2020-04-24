@@ -17,24 +17,30 @@
           width="180"
         />
         <el-table-column
-          prop="weekDay"
-          label="星期"
+          prop="name"
+          label="名称"
           width="120"
+        />
+        <el-table-column
+          prop="icon"
+          label="图标"
+          width="80"
         >
           <template slot-scope="scope">
-            {{ getWeek(scope.row.weekDay) }}
+            <el-image
+              style="width: 60px; height: 60px"
+              :src="scope.row.icon"
+              fit="cover"
+            />
           </template>
         </el-table-column>
+
         <el-table-column
-          prop="startAt"
-          width="120"
-          label="开始时间"
+          prop="seq"
+          label="排序"
+          width="80"
         />
-        <el-table-column
-          prop="endAt"
-          width="120"
-          label="结束时间"
-        />
+
         <el-table-column
           width="120"
           label="创建时间"
@@ -43,12 +49,16 @@
             {{ scope.row.createAt | timeFormatter }}
           </template>
         </el-table-column>
+
+        <el-table-column
+          prop="description"
+          label="描述"
+        />
         <el-table-column label="操作" width="200" fixed="right" align="center">
           <template slot-scope="scope">
-            <router-link :to="'/setting/half/update/'+scope.row.id">
+            <router-link :to="'/setting/shop/title/update/safe/'+scope.row.id">
               <el-button>编辑</el-button>
             </router-link>
-            <el-button type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -69,40 +79,19 @@
 </template>
 
 <script>
-import { fetchList, remove } from '@/api/half-time'
+import { fetchList } from '@/api/shop-title'
 
 const defaultListQuery = {
   current: 1,
-  size: 10
+  size: 10,
+  type: 'SAFETY'
 }
 export default {
   data() {
     return {
       listQuery: Object.assign({}, defaultListQuery),
       tableData: [],
-      total: null,
-      options: [{
-        value: 'MONDAY',
-        label: '周一'
-      }, {
-        value: 'TUESDAY',
-        label: '周二'
-      }, {
-        value: 'WEDNESDAY',
-        label: '周三'
-      }, {
-        value: 'THURSDAY',
-        label: '周四'
-      }, {
-        value: 'FRIDAY',
-        label: '周五'
-      }, {
-        value: 'SATURDAY',
-        label: '周六'
-      }, {
-        value: 'SUNDAY',
-        label: '周日'
-      }]
+      total: null
     }
   },
   created() {
@@ -114,30 +103,8 @@ export default {
       this.total = data.total
       this.tableData = data.records
     },
-    getWeek(val) {
-      const temp = this.options.find(item => {
-        return item.value === val
-      })
-      return temp.label
-    },
     handleAdd() {
-      this.$router.push({ path: '/setting/half/add' })
-    },
-    handleDelete(index, row) {
-      this.$confirm('是否要删除该记录吗', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        remove(row.id).then(() => {
-          this.$notify({
-            message: '删除成功',
-            type: 'success',
-            duration: 1000
-          })
-          this.getList()
-        })
-      })
+      this.$router.push({ path: '/setting/shop/title/add/safe' })
     },
     handleSizeChange(val) {
       this.listQuery.size = val

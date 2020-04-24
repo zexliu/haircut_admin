@@ -58,6 +58,10 @@
             />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="所在地区：">
+          <el-cascader v-model="selectedRegion" :options="regionTree" :props="{checkStrictly: true ,value:'adCode' , label:'name'}" />
+        </el-form-item>
         <el-form-item label="性别：">
           <el-select
             v-model="listQuery.genderType"
@@ -138,11 +142,11 @@
           </template>
         </el-table-column>
 
-        <el-table-column
+        <!-- <el-table-column
           prop="subject"
           label="主题"
           width="120"
-        />
+        /> -->
 
         <el-table-column
           prop="userId"
@@ -223,6 +227,7 @@
 <script>
 import { fetchList as fetchUserList } from '@/api/user'
 import { fetchList as fetchShopList } from '@/api/shop'
+import { fetchTree as fetchRegionTree } from '@/api/region'
 
 import { fetchShopList as fetchList } from '@/api/order'
 
@@ -236,7 +241,9 @@ const defaultListQuery = {
   startAt: null,
   endAt: null,
   current: 1,
-  size: 10
+  size: 10,
+  provinceCode: null,
+  cityCode: null
 
 }
 export default {
@@ -246,6 +253,8 @@ export default {
       tableData: [],
       loading: false,
       total: null,
+      selectedRegion: [],
+      regionTree: [],
       users: [],
       shops: [],
       timeRange: [],
@@ -308,9 +317,15 @@ export default {
     }
   },
   created() {
+    this.fetchRegion()
     this.getList()
   },
   methods: {
+    fetchRegion() {
+      fetchRegionTree({ level: 2 }).then(response => {
+        this.regionTree = response
+      })
+    },
     remoteMethod(query) {
       if (query !== '') {
         this.loading = true
@@ -339,6 +354,18 @@ export default {
       this.tableData = data.records
     },
     handleSearch() {
+      if (this.selectedRegion) {
+        if (this.selectedRegion[0]) {
+          this.listQuery.provinceCode = this.selectedRegion[0]
+        } else {
+          this.listQuery.provinceCode = null
+        }
+        if (this.selectedRegion[1]) {
+          this.listQuery.cityCode = this.selectedRegion[1]
+        } else {
+          this.listQuery.cityCode = null
+        }
+      }
       this.listQuery.current = 1
       this.getList()
     },
@@ -377,14 +404,14 @@ export default {
           data.forEach(element => {
             total += element.totalAmount
           })
-          sums[index] = total
+          sums[index] = total.toFixed(2)
         //   const values = data.map(item => Number(item[column.property]))
         } else if (index === 2) {
           let total = 0
           data.forEach(element => {
             total += element.realAmount
           })
-          sums[index] = total
+          sums[index] = total.toFixed(2)
         //   const values = data.map(item => Number(item[column.property]))
         } else {
           sums[index] = ''

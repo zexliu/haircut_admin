@@ -58,7 +58,9 @@
             />
           </el-select>
         </el-form-item>
-
+        <el-form-item label="所在地区：">
+          <el-cascader v-model="selectedRegion" :options="regionTree" :props="{checkStrictly: true ,value:'adCode' , label:'name'}" />
+        </el-form-item>
         <el-form-item label="服务类型：">
           <el-select
             v-model="listQuery.serviceId"
@@ -228,6 +230,7 @@ import { fetchList as fetchShopList } from '@/api/shop'
 
 import { fetchList } from '@/api/groupon'
 import { fetchList as fetchServiceList } from '@/api/service-projects'
+import { fetchTree as fetchRegionTree } from '@/api/region'
 
 const defaultListQuery = {
   keywords: null,
@@ -240,7 +243,9 @@ const defaultListQuery = {
   startAt: null,
   endAt: null,
   current: 1,
-  size: 10
+  size: 10,
+  provinceCode: null,
+  cityCode: null
 
 }
 export default {
@@ -254,6 +259,9 @@ export default {
       total: null,
       users: [],
       shops: [],
+      selectedRegion: [],
+      regionTree: [],
+
       timeRange: [],
       services: [],
       orderStatus: [
@@ -307,10 +315,16 @@ export default {
     }
   },
   created() {
+    this.fetchRegion()
     this.getServices()
     this.getList()
   },
   methods: {
+    fetchRegion() {
+      fetchRegionTree({ level: 2 }).then(response => {
+        this.regionTree = response
+      })
+    },
     getServiceName(serviceId) {
       const res = this.services.find(item => {
         return item.id === serviceId
@@ -355,6 +369,18 @@ export default {
       this.tableData = data.records
     },
     handleSearch() {
+      if (this.selectedRegion) {
+        if (this.selectedRegion[0]) {
+          this.listQuery.provinceCode = this.selectedRegion[0]
+        } else {
+          this.listQuery.provinceCode = null
+        }
+        if (this.selectedRegion[1]) {
+          this.listQuery.cityCode = this.selectedRegion[1]
+        } else {
+          this.listQuery.cityCode = null
+        }
+      }
       this.listQuery.current = 1
       this.getList()
     },
@@ -393,7 +419,7 @@ export default {
           data.forEach(element => {
             total += element.amount
           })
-          sums[index] = total
+          sums[index] = total.toFixed(2)
         //   const values = data.map(item => Number(item[column.property]))
         } else {
           sums[index] = ''

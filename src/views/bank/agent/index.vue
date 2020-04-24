@@ -17,53 +17,35 @@
           width="180"
         />
         <el-table-column
-          prop="name"
-          label="名称"
+          prop="brandName"
+          label="银行名称"
           width="120"
         />
         <el-table-column
-          prop="icon"
-          label="图标"
-          width="80"
-        >
-          <template slot-scope="scope">
-            <el-image
-              style="width: 60px; height: 60px"
-              :src="scope.row.icon"
-              fit="cover"
-            />
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="seq"
-          label="排序"
-          width="80"
+          width="200"
+          prop="brandNo"
+          label="银行卡号"
         />
-
         <el-table-column
           width="120"
-          label="创建时间"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.createAt | timeFormatter }}
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="description"
-          label="描述"
+          prop="brandUsername"
+          label="开户人姓名"
         />
-        <el-table-column label="操作" width="200" fixed="right" align="center">
+        <el-table-column
+          width="100"
+          prop="brandOpening"
+          label="开户行"
+        />
+        <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
-            <router-link :to="'/setting/shop/title/update/'+scope.row.id">
+            <router-link :to="'/bank/update/'+scope.row.id">
               <el-button>编辑</el-button>
             </router-link>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="pagination-container">
+    <!-- <div class="pagination-container">
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
@@ -74,17 +56,15 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/shop-title'
-
+import { fetchList } from '@/api/bank'
 const defaultListQuery = {
   current: 1,
-  size: 10,
-  type: 'DEFAULT'
+  size: 10
 }
 export default {
   data() {
@@ -98,22 +78,29 @@ export default {
     this.getList()
   },
   methods: {
-    async getList() {
-      const data = await fetchList(this.listQuery)
-      this.total = data.total
-      this.tableData = data.records
+    getList() {
+      fetchList(this.listQuery).then(response => {
+        this.tableData = response
+      })
     },
-    handleAdd() {
-      this.$router.push({ path: '/setting/shop/title/add' })
-    },
-    handleSizeChange(val) {
-      this.listQuery.size = val
+    handleSearch() {
       this.listQuery.current = 1
       this.getList()
     },
-    handleCurrentChange(val) {
-      this.listQuery.current = val
-      this.getList()
+    handleResetSearch() {
+      this.listQuery = Object.assign({}, defaultListQuery)
+    },
+    // handleSizeChange(val) {
+    //   this.listQuery.size = val
+    //   this.listQuery.current = 1
+    //   this.getList()
+    // },
+    // handleCurrentChange(val) {
+    //   this.listQuery.current = val
+    //   this.getList()
+    // },
+    handleAdd() {
+      this.$router.push({ path: '/bank/add' })
     }
   }
 }

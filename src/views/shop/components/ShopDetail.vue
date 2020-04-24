@@ -28,9 +28,9 @@
           <el-form-item label="店铺LOGO：" prop="logo">
             <avatar-upload v-model="form.logo" />
           </el-form-item>
-          <el-form-item label="封面图片：" prop="coverImage">
+          <!-- <el-form-item label="封面图片：" prop="coverImage">
             <avatar-upload v-model="form.coverImage" />
-          </el-form-item>
+          </el-form-item> -->
         </el-col>
         <el-col :span="12">
           <el-form-item label="联系人：" prop="leaderName">
